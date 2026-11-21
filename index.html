@@ -19,7 +19,7 @@ window.pdvOneSignalReady = new Promise(function(resolve, reject) {
       await OneSignal.init({
         appId: "034feeca-fc90-4e38-a152-08a256b7b6b8",
         serviceWorkerPath: "OneSignalSDKWorker.js",
-        serviceWorkerParam: { scope: "/Sistema/push/onesignal/" },
+        serviceWorkerParam: { scope: "/Sistema/" },
         autoResubscribe: true,
         welcomeNotification: { disable: true },
         notifyButton: { enable: false }
