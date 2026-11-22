@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#14243A"><title>Açaí Obrigatório · Meu portal</title>
+<style>
+:root{--bg:#F3F6FA;--sf:#fff;--ink:#14202E;--mute:#64748B;--line:#E3E9F1;--ac:#0E8FA8;--ok:#177044;--okbg:#E3F6EC;--warn:#9A5800;--warnbg:#FFF0D7}
+@media(prefers-color-scheme:dark){:root{--bg:#0B1522;--sf:#142235;--ink:#E8EEF6;--mute:#93A4B8;--line:#243449;--ac:#3CC4D8;--ok:#7BE0A6;--okbg:#14382A;--warn:#F5B35C;--warnbg:#3A2B12}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;padding:max(18px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom))}
+.wrap{max-width:520px;margin:auto}.brand{display:flex;align-items:center;gap:11px;margin:4px 2px 18px}.brand img{width:44px;height:44px;border-radius:13px;object-fit:contain;background:#fff}.brand b{display:block;font-size:16px;letter-spacing:-.02em}.brand span{font-size:13px;color:var(--mute)}
+h2{font-size:18px;letter-spacing:-.02em;margin:26px 2px 10px}
+.loyaltyCard{background:linear-gradient(135deg,#4b105e,#79248e 70%,#a34eb3);color:#fff;border-radius:22px;padding:22px;width:100%;box-shadow:0 15px 35px #32103a25}.loyaltyCard .brandline{display:flex;justify-content:space-between;align-items:center;gap:12px}.loyaltyCard .points{font-size:36px;font-weight:900;margin:18px 0 4px}.loyaltyCard .muted{color:#f0dff5}
+.banner{margin-top:14px;padding:13px 15px;border-radius:14px;font-size:14px;font-weight:600;background:var(--okbg);color:var(--ok)}.banner.warn{background:var(--warnbg);color:var(--warn)}
+.order{background:var(--sf);border:1px solid var(--line);border-radius:16px;margin-bottom:9px;overflow:hidden}.order summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 15px}.order summary::-webkit-details-marker{display:none}.order small{display:block;color:var(--mute);font-size:12px;margin-top:3px}
+.tag{display:inline-block;font-size:12px;font-weight:650;padding:3px 9px;border-radius:99px;background:var(--okbg);color:var(--ok);margin-top:5px}.tag.warn{background:var(--warnbg);color:var(--warn)}
+.det{padding:0 15px 14px;font-size:14px;line-height:1.7;border-top:1px solid var(--line);padding-top:11px}
+.state{text-align:center;padding:40px 14px;color:var(--mute)}.foot{text-align:center;font-size:12px;color:var(--mute);margin-top:22px}
+</style></head><body><div class="wrap">
+<div class="brand"><img src="./logo.jpg" alt=""><div><b>Açaí Obrigatório</b><span>Meu portal</span></div></div>
+<div id="app"><div class="state">Carregando suas informações...</div></div>
+<div class="foot">Dados atualizados a cada vez que você abre este link.</div></div>
+<script>
+const API='https://script.google.com/macros/s/AKfycbw4RDHwWKWwhuBCXCb98lGfx3C2ac2yX1YwzqXQXlXivmhPgcOIQbXVigZH0B4wsWED/exec';
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+function code(c){const b=String(c.cardToken||'')+'|'+String(c.cardUpdatedAt||'')+'|'+String(c.points||0)+'|'+String(c.rewards||0);let h=0;for(let i=0;i<b.length;i++)h=((h<<5)-h)+b.charCodeAt(i),h|=0;return Math.abs(h).toString(36).toUpperCase().slice(0,6).padStart(6,'0')}
+function fail(t,m){$('app').innerHTML='<div class="state"><b style="color:var(--ink);font-size:18px">'+t+'</b><p>'+m+'</p></div>'}
+function render(d){
+ const target=Math.max(1,+d.target||10),pts=Math.max(0,+d.points||0),pct=Math.min(100,(pts%target)/target*100),up=d.cardUpdatedAt?new Date(d.cardUpdatedAt):null;
+ const open=(d.orders||[]).reduce((s,o)=>s+(+o.pending||0),0);
+ const card=`<div class="loyaltyCard"><div class="brandline"><div><div style="font-size:12px;letter-spacing:2px">AÇAÍ OBRIGATÓRIO</div><h2 style="margin:5px 0;color:#fff">Clube Obrigatório</h2><div class="muted">Cartão fidelidade digital</div></div><div style="width:66px;height:66px;border-radius:14px;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;overflow:hidden"><img src="./logo.jpg" alt="" style="width:58px;height:58px;object-fit:contain;border-radius:10px"></div></div><div style="margin-top:18px">Olá, ${esc(d.name)}!</div><div class="points">${pts} <span style="font-size:15px">pontos</span></div><div class="muted">${Math.max(0,target-pts%target)} ponto(s) para a próxima recompensa</div><div style="background:#ffffff3b;height:8px;border-radius:99px;margin-top:14px;overflow:hidden"><div style="background:#f8e76b;height:100%;width:${pct}%"></div></div><div style="margin-top:15px;font-weight:750">🎁 ${esc(d.reward)} · ${+d.rewards||0} disponível(is)</div><div class="muted" style="margin-top:12px;font-size:12px">Código de validação: ${code(d)}<br>Última atualização: ${up&&!isNaN(up)?up.toLocaleString('pt-BR'):'Sem movimentação registrada'}</div></div>`;
+ const banner=open>0?`<div class="banner warn">Você tem ${money(open)} em aberto. Fale com a gente para acertar.</div>`:`<div class="banner">Tudo em dia, nenhum valor em aberto.</div>`;
+ const list=(d.orders||[]).map(o=>{const dt=new Date(o.date),st=o.pending<=0?'Pago':(o.pending<o.total?'Parcial':'Em aberto');return `<details class="order"><summary><div><b>Pedido #${String(o.id).padStart(4,'0')}</b><small>${isNaN(dt)?'':dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})} · ${o.items} item(ns)</small><span class="tag ${st==='Pago'?'':'warn'}">${st}</span></div><b>${money(o.total)}</b></summary><div class="det">${(o.lines||[]).map(l=>'• '+esc(l)).join('<br>')||'Sem detalhes'}</div></details>`}).join('')||'<div class="state">Você ainda não tem pedidos.</div>';
+ $('app').innerHTML=card+banner+'<h2>Meus pedidos</h2>'+list;
+}
+(function(){
+ const t=new URLSearchParams(location.search).get('t')||'';
+ if(!t)return fail('Link incompleto','Peça um novo link ao Açaí Obrigatório.');
+ const cb='__portal_'+Date.now(),s=document.createElement('script');let done=false;
+ const end=()=>{done=true;try{delete window[cb];s.remove()}catch(e){}};
+ window[cb]=d=>{end();d&&d.ok?render(d):fail('Cliente não encontrado','Confira o link enviado pelo Açaí Obrigatório.')};
+ s.onerror=()=>{end();fail('Não foi possível carregar','Verifique sua internet e abra o link de novo.')};
+ s.src=API+'?action=portal&token='+encodeURIComponent(t)+'&callback='+cb+'&t='+Date.now();document.body.appendChild(s);
+ setTimeout(()=>{if(!done){end();fail('Demorou para responder','Tente abrir o link novamente em instantes.')}},12000);
+})();
+</script></body></html>
