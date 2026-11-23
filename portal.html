@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#14243A"><title>Açaí Obrigatório · Meu portal</title>
+<style>
+:root{--bg:#F3F6FA;--sf:#fff;--ink:#14202E;--mute:#64748B;--line:#E3E9F1;--ac:#0E8FA8;--ok:#177044;--okbg:#E3F6EC;--warn:#9A5800;--warnbg:#FFF0D7}
+@media(prefers-color-scheme:dark){:root{--bg:#0B1522;--sf:#142235;--ink:#E8EEF6;--mute:#93A4B8;--line:#243449;--ac:#3CC4D8;--ok:#7BE0A6;--okbg:#14382A;--warn:#F5B35C;--warnbg:#3A2B12}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;padding:max(18px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom))}
+.wrap{max-width:520px;margin:auto}.brand{display:flex;align-items:center;gap:11px;margin:4px 2px 18px}.brand img{width:44px;height:44px;border-radius:13px;object-fit:contain;background:#fff}.brand b{display:block;font-size:16px;letter-spacing:-.02em}.brand span{font-size:13px;color:var(--mute)}
+h2{font-size:18px;letter-spacing:-.02em;margin:26px 2px 10px}
+.loyaltyCard{background:linear-gradient(135deg,#4b105e,#79248e 70%,#a34eb3);color:#fff;border-radius:22px;padding:22px;width:100%;box-shadow:0 15px 35px #32103a25}.loyaltyCard .brandline{display:flex;justify-content:space-between;align-items:center;gap:12px}.loyaltyCard .points{font-size:36px;font-weight:900;margin:18px 0 4px}.loyaltyCard .muted{color:#f0dff5}
+.banner{margin-top:14px;padding:13px 15px;border-radius:14px;font-size:14px;font-weight:600;background:var(--okbg);color:var(--ok)}.banner.warn{background:var(--warnbg);color:var(--warn)}
+.order{background:var(--sf);border:1px solid var(--line);border-radius:16px;margin-bottom:9px;overflow:hidden}.order summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 15px}.order summary::-webkit-details-marker{display:none}.order small{display:block;color:var(--mute);font-size:12px;margin-top:3px}
+.tag{display:inline-block;font-size:12px;font-weight:650;padding:3px 9px;border-radius:99px;background:var(--okbg);color:var(--ok);margin-top:5px}.tag.warn{background:var(--warnbg);color:var(--warn)}
+.det{padding:0 15px 14px;font-size:14px;line-height:1.7;border-top:1px solid var(--line);padding-top:11px}
+.state{text-align:center;padding:40px 14px;color:var(--mute)}.foot{text-align:center;font-size:12px;color:var(--mute);margin-top:22px}
+.go{width:100%;margin-top:14px;padding:14px;border:0;border-radius:14px;background:linear-gradient(135deg,#1C6E93,#0E8FA8);color:#fff;font-size:15px;font-weight:700}.go:disabled{opacity:.6}.step{display:flex;align-items:center;gap:12px}.step button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:18px}.step span{min-width:18px;text-align:center;font-weight:700}textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--sf);color:var(--ink);font:inherit;margin-top:4px}
+.hello h1{font-size:26px;margin:0;letter-spacing:-.03em}.hello p{margin:4px 0 16px;color:var(--mute);font-size:15px}.tip{margin-top:12px;padding:12px 14px;border-radius:14px;background:var(--sf);border:1px solid var(--line);font-size:14px}.acts{display:flex;gap:10px;margin-top:14px}.acts .go{margin-top:0;width:auto;flex:1.4}.wa{flex:1;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#25D366;color:#05381A;font-weight:700;text-decoration:none;font-size:15px}
+</style></head><body><div class="wrap">
+<div class="brand"><img src="./logo.jpg" alt=""><div><b>Açaí Obrigatório</b><span>Meu portal</span></div></div>
+<div id="app"><div class="state">Carregando suas informações...</div></div>
+<div class="foot">Dados atualizados a cada vez que você abre este link.</div></div>
+<script>
+const API='https://script.google.com/macros/s/AKfycbw4RDHwWKWwhuBCXCb98lGfx3C2ac2yX1YwzqXQXlXivmhPgcOIQbXVigZH0B4wsWED/exec';
+const WA='5519996119345';
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+function code(c){const b=String(c.cardToken||'')+'|'+String(c.cardUpdatedAt||'')+'|'+String(c.points||0)+'|'+String(c.rewards||0);let h=0;for(let i=0;i<b.length;i++)h=((h<<5)-h)+b.charCodeAt(i),h|=0;return Math.abs(h).toString(36).toUpperCase().slice(0,6).padStart(6,'0')}
+function fail(t,m){$('app').innerHTML='<div class="state"><b style="color:var(--ink);font-size:18px">'+t+'</b><p>'+m+'</p></div>'}
+function render(d){
+ const target=Math.max(1,+d.target||10),pts=Math.max(0,+d.points||0),pct=Math.min(100,(pts%target)/target*100),up=d.cardUpdatedAt?new Date(d.cardUpdatedAt):null;
+ const open=(d.orders||[]).reduce((s,o)=>s+(+o.pending||0),0);
+ const card=`<div class="loyaltyCard"><div class="brandline"><div><div style="font-size:12px;letter-spacing:2px">AÇAÍ OBRIGATÓRIO</div><h2 style="margin:5px 0;color:#fff">Clube Obrigatório</h2><div class="muted">Cartão fidelidade digital</div></div><div style="width:66px;height:66px;border-radius:14px;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;overflow:hidden"><img src="./logo.jpg" alt="" style="width:58px;height:58px;object-fit:contain;border-radius:10px"></div></div><div style="margin-top:18px">Olá, ${esc(d.name)}!</div><div class="points">${pts} <span style="font-size:15px">pontos</span></div><div class="muted">${Math.max(0,target-pts%target)} ponto(s) para a próxima recompensa</div><div style="background:#ffffff3b;height:8px;border-radius:99px;margin-top:14px;overflow:hidden"><div style="background:#f8e76b;height:100%;width:${pct}%"></div></div><div style="margin-top:15px;font-weight:750">🎁 ${esc(d.reward)} · ${+d.rewards||0} disponível(is)</div><div class="muted" style="margin-top:12px;font-size:12px">Código de validação: ${code(d)}<br>Última atualização: ${up&&!isNaN(up)?up.toLocaleString('pt-BR'):'Sem movimentação registrada'}</div></div>`;
+ const banner=open>0?`<div class="banner warn">Você tem ${money(open)} em aberto. <a style="color:inherit;text-decoration:underline" href="https://wa.me/'+WA+'" target="_blank" rel="noopener">Chame no WhatsApp</a> para acertar.</div>`:`<div class="banner">Tudo em dia, nenhum valor em aberto.</div>`;
+ const list=(d.orders||[]).map(o=>{const dt=new Date(o.date),st=o.pending<=0?'Pago':(o.pending<o.total?'Parcial':'Em aberto');return `<details class="order"><summary><div><b>Pedido #${String(o.id).padStart(4,'0')}</b><small>${isNaN(dt)?'':dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})} · ${o.items} item(ns)</small><span class="tag ${st==='Pago'?'':'warn'}">${st}</span></div><b>${money(o.total)}</b></summary><div class="det">${(o.lines||[]).map(l=>'• '+esc(l)).join('<br>')||'Sem detalhes'}</div></details>`}).join('')||'<div class="state">Você ainda não fez pedidos por aqui. Que tal começar agora?</div>';
+ const h=new Date().getHours(),hi=h<12?'Bom dia':h<18?'Boa tarde':'Boa noite',first=esc(String(d.name||'').trim().split(/\s+/)[0]),left=Math.max(0,target-pts%target);
+ const wa='https://wa.me/'+WA+'?text='+encodeURIComponent('Olá! Aqui é '+d.name+', estou falando pelo portal do Açaí Obrigatório.');
+ const hero=`<div class="hello"><h1>${hi}, ${first}! 👋</h1><p>Que bom ter você por aqui. O que vai ser hoje?</p></div>`;
+ const tip=(+d.rewards||0)>0?`<div class="tip">🎉 Você tem <b>${+d.rewards} recompensa(s)</b> para resgatar: ${esc(d.reward)}. É só avisar no próximo pedido!</div>`:`<div class="tip">⭐ Faltam só <b>${left} ponto(s)</b> para você ganhar ${esc(d.reward)}.</div>`;
+ const acts=`<div class="acts"><button class="go" onclick="openOrder()">🛒 Fazer pedido</button><a class="wa" href="${wa}" target="_blank" rel="noopener">💬 WhatsApp</a></div>`;
+ $('app').innerHTML=hero+card+tip+acts+'<div id="orderBox"></div><div id="quotesBox"></div>'+banner+'<h2>Meus pedidos</h2>'+list;loadQuotes();
+}
+const TOKEN=new URLSearchParams(location.search).get('t')||'';
+function call(q){return new Promise((ok,no)=>{const cb='__pc'+Date.now()+Math.random().toString(36).slice(2),s=document.createElement('script');let d=false;const end=()=>{d=true;try{delete window[cb];s.remove()}catch(e){}};window[cb]=x=>{end();ok(x)};s.onerror=()=>{end();no()};s.src=API+'?'+q+'&token='+encodeURIComponent(TOKEN)+'&callback='+cb+'&t='+Date.now();document.body.appendChild(s);setTimeout(()=>{if(!d){end();no()}},15000)})}
+let CART={},PRODS=[],NOTE='';
+async function openOrder(){const b=$('orderBox');b.innerHTML='<div class="state">Carregando produtos...</div>';b.scrollIntoView({behavior:'smooth'});try{const r=await call('action=ps_products');if(!r.ok)throw 0;PRODS=r.products;CART={};NOTE='';drawOrder()}catch(e){b.innerHTML='<div class="state">Não foi possível carregar os produtos.</div>'}}
+function chg(id,n){const pr=PRODS.find(x=>x.id===id),lim=pr&&pr.stock!=null?pr.stock:50;CART[id]=Math.max(0,Math.min(lim,(CART[id]||0)+n));drawOrder()}
+function stk(p){return p.stock==null?'':p.stock<=0?'':p.stock<=5?' · Últimas '+p.stock+' un.':' · '+p.stock+' disponíveis'}
+function drawOrder(){const total=PRODS.reduce((s,p)=>s+(CART[p.id]||0)*p.price,0),qty=Object.values(CART).reduce((a,b)=>a+b,0);
+ $('orderBox').innerHTML='<h2>Fazer pedido</h2>'+PRODS.map(p=>`<div class="order" style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 15px"><div><b>${esc(p.name)}</b><small>${money(p.price)}${stk(p)}</small></div>${p.stock===0?'<span class="tag warn">Esgotado</span>':`<div class="step"><button onclick="chg(${p.id},-1)">−</button><span>${CART[p.id]||0}</span><button onclick="chg(${p.id},1)">+</button></div>`}</div>`).join('')+`<textarea id="oNote" rows="2" placeholder="Observação (ex.: retirar às 14h)" oninput="NOTE=this.value">${esc(NOTE)}</textarea><button class="go" id="sendBtn" ${qty?'':'disabled'} onclick="sendOrder()">Enviar pedido · ${money(total)}</button>`}
+async function sendOrder(){const items=PRODS.filter(p=>CART[p.id]>0).map(p=>({p:p.id,q:CART[p.id]}));if(!items.length)return;const b=$('sendBtn');b.disabled=true;b.textContent='Enviando...';
+ try{const r=await call('action=ps_order&items='+encodeURIComponent(JSON.stringify(items))+'&note='+encodeURIComponent(NOTE));if(!r.ok)throw new Error(r.error||'');$('orderBox').innerHTML='<div class="banner">✓ Pedido enviado! Assim que o Açaí Obrigatório confirmar, ele aparece em “Meus pedidos”.</div>'}
+ catch(e){alert(e.message==='limit'?'Você já tem pedidos aguardando confirmação.':e.message==='stock'?'Algum item esgotou ou ficou com menos unidades. Vamos atualizar a lista.':'Não foi possível enviar. Tente de novo.');e.message==='stock'?openOrder():drawOrder()}}
+let QUOTES=[];
+async function loadQuotes(){try{const r=await call('action=pq_list');if(r&&r.ok){QUOTES=r.quotes||[];drawQuotes()}}catch(e){}}
+function qt(q){const sub=(q.items||[]).reduce((s,i)=>s+(+i.qty||0)*(+i.price||0),0),total=Math.max(0,sub-(+q.discount||0)+(+q.fee||0));return {total,dep:total*(+q.depositPct||0)/100}}
+function drawQuotes(){const el=$('quotesBox');if(!el)return;if(!QUOTES.length){el.innerHTML='';return}
+ el.innerHTML='<h2>Meus orçamentos</h2>'+QUOTES.slice().sort((a,b)=>b.id-a.id).map(q=>{const t=qt(q),end=new Date(new Date(q.createdAt).getTime()+(+q.validDays||7)*864e5),exp=q.status==='Enviado'&&Date.now()>end.getTime(),st=exp?'Expirado':q.status,ok=st==='Aprovado',num='ORC-'+String(q.id).padStart(4,'0'),ev=q.eventDate?new Date(q.eventDate+'T12:00').toLocaleDateString('pt-BR'):'';
+ return `<details class="order" open><summary><div><b>${num}</b><small>${ev?'Evento em '+ev:'Sem data definida'}${q.place?' · '+esc(q.place):''}</small><span class="tag ${ok?'':'warn'}">${st==='Enviado'?'Aguardando sua resposta':st}</span></div><b>${money(t.total)}</b></summary><div class="det">${(q.items||[]).map(i=>'• '+(+i.qty)+'x '+esc(i.name)+' · '+money(i.price)).join('<br>')}${q.fee>0?'<br>• Entrega/montagem · '+money(q.fee):''}${q.discount>0?'<br>• Desconto − '+money(q.discount):''}<br><br>Sinal para reservar: <b>${money(t.dep)}</b>${st==='Enviado'?'<br>Válido até '+end.toLocaleDateString('pt-BR'):''}${st==='Enviado'?`<div class="acts"><button class="go" onclick="answerQuote(${q.id},'Aprovado')">✓ Aprovar</button><button class="wa" style="background:var(--line);color:var(--ink);border:0" onclick="answerQuote(${q.id},'Recusado')">Recusar</button></div>`:''}${ok?`<div class="banner" style="margin-top:10px">✓ Aprovado! Para garantir a data, faça o sinal e <a style="color:inherit;text-decoration:underline" href="https://wa.me/${WA}?text=${encodeURIComponent('Olá! Aprovei o orçamento '+num+'.')}" target="_blank" rel="noopener">avise no WhatsApp</a>.</div>`:''}</div></details>`}).join('')}
+async function answerQuote(id,ans){const q=QUOTES.find(x=>x.id===id);if(!q)return;const t=qt(q);if(!confirm(ans==='Aprovado'?'Aprovar este orçamento de '+money(t.total)+'? O sinal de '+money(t.dep)+' garante a data.':'Recusar este orçamento?'))return;
+ try{const r=await call('action=pq_answer&id='+id+'&answer='+ans);if(!r.ok)throw new Error(r.error||'');await loadQuotes()}catch(e){alert(e.message==='expired'?'Este orçamento expirou. Peça um novo pelo WhatsApp.':'Não foi possível enviar sua resposta. Tente de novo.')}}
+(function(){
+ const t=TOKEN;
+ if(!t)return fail('Link incompleto','Peça um novo link ao Açaí Obrigatório.');
+ const cb='__portal_'+Date.now(),s=document.createElement('script');let done=false;
+ const end=()=>{done=true;try{delete window[cb];s.remove()}catch(e){}};
+ window[cb]=d=>{end();d&&d.ok?render(d):fail('Cliente não encontrado','Confira o link enviado pelo Açaí Obrigatório.')};
+ s.onerror=()=>{end();fail('Não foi possível carregar','Verifique sua internet e abra o link de novo.')};
+ s.src=API+'?action=portal&token='+encodeURIComponent(t)+'&callback='+cb+'&t='+Date.now();document.body.appendChild(s);
+ setTimeout(()=>{if(!done){end();fail('Demorou para responder','Tente abrir o link novamente em instantes.')}},12000);
+})();
+</script></body></html>
